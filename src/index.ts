@@ -1,6 +1,23 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
+const RULES: Record<string, { maxBytes: number; mimes: string[] }> = {
+  informe: {
+    maxBytes: 15 * 1024 * 1024, // 15 MB
+    mimes: [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'text/csv',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel',
+    ],
+  },
+  dataset: {
+    maxBytes: 50 * 1024 * 1024, // 50 MB
+    mimes: ['text/csv'],
+  },
+};
+
 type Bindings = {
   STORAGE_BUCKET: R2Bucket;
   INTERNAL_SERVICE_SECRET: string;
