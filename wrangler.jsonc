@@ -8,5 +8,8 @@
       "binding": "STORAGE_BUCKET",
       "bucket_name": "datareport-iasa-storage"
     }
-  ]
+  ],
+  "vars": {
+    "MS_AUTH_URL": "https://ms-auth.agro-ecologica.workers.dev"
+  }
 }
