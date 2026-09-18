@@ -8,19 +8,24 @@ type Bindings = {
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-app.use('*', cors());
-
-// Reglas de negocio estrictas en backend
-const RULES = {
-  informe: {
-    maxBytes: 15 * 1024 * 1024,
-    mimes: ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
-  },
-  dataset: {
-    maxBytes: 50 * 1024 * 1024,
-    mimes: ['text/csv', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/zip'],
-  },
-};
+app.use(
+  '*',
+  cors({
+    origin: (origin) => origin || '*',
+    allowMethods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: [
+      'Content-Type', 
+      'Authorization', 
+      'X-Internal-Secret',
+      'X-File-Type', 
+      'X-Target-Id', 
+      'X-Filename'
+    ],
+    exposeHeaders: ['Content-Length'],
+    maxAge: 600,
+    credentials: true,
+  })
+);
 
 // Subida directa por stream (Stream directo al Bucket sin cargar todo en RAM)
 app.put('/api/v1/storage/upload', async (c) => {
