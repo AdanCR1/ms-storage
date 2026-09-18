@@ -70,6 +70,8 @@ app.put('/api/v1/storage/upload', async (c) => {
 });
 
 // Descarga / visualización directa
+app.get('/health', (c) => c.json({ status: 'ok' }));
+
 app.get('/api/v1/storage/file/*', async (c) => {
   const fileKey = c.req.path.replace('/api/v1/storage/file/', '');
   const object = await c.env.STORAGE_BUCKET.get(fileKey);
