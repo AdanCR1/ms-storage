@@ -28,14 +28,17 @@ const app = new Hono<{ Bindings: Bindings }>();
 app.use(
   '*',
   cors({
-    origin: (origin) => origin || '*',
+    origin: (origin) => {
+      const allowed = ['https://informes.iasabolivia.com', 'http://localhost:4321'];
+      return allowed.includes(origin) ? origin : null;
+    },
     allowMethods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
     allowHeaders: [
-      'Content-Type', 
-      'Authorization', 
+      'Content-Type',
+      'Authorization',
       'X-Internal-Secret',
-      'X-File-Type', 
-      'X-Target-Id', 
+      'X-File-Type',
+      'X-Target-Id',
       'X-Filename'
     ],
     exposeHeaders: ['Content-Length'],
@@ -68,7 +71,7 @@ app.put('/api/v1/storage/upload', async (c) => {
 
   // 3. Sanitizar y armar file key
   const cleanFilename = filename.replace(/[^a-zA-Z0-9._-]/g, '_');
-  const fileKey = `\({tipo}s/\){targetId}/\({Date.now()}_\){cleanFilename}`;
+  const fileKey = `${tipo}s/${targetId}/${Date.now()}_${cleanFilename}`;
 
   // 4. Guardar directamente en R2 con el binding nativo
   await c.env.STORAGE_BUCKET.put(fileKey, c.req.raw.body, {
